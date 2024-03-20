@@ -8,6 +8,8 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +71,19 @@ public class QuestionController {
         List<String> subjects = iQuestionService.getAllSubjects();
 
         return ResponseEntity.ok(subjects);
+    }
+
+    @GetMapping("user-question")
+    public ResponseEntity<List<Question>> getQuestionForUser(@RequestParam Integer numberOfQuestion,String subject){
+        List<Question> allQuestions = iQuestionService.getQuestionForUser(numberOfQuestion,subject);
+        List<Question> mutableQuestions = new ArrayList<>(allQuestions);
+        Collections.shuffle(mutableQuestions);
+
+        int availableQuestions = Math.min(numberOfQuestion,mutableQuestions.size());
+
+        List<Question> randomQuestions = mutableQuestions.subList(0,availableQuestions);
+
+        return ResponseEntity.ok(randomQuestions);
     }
 
 }
